@@ -1,0 +1,29 @@
+{
+  "name": "reactive-synth-clock-divider",
+  "version": "0.1.0",
+  "description": "WASM implementation of a clock divider audio processing node compatible with the web audio API. Created for reactive-synth.",
+  "main": "clock-divider.js",
+  "files": [
+    "clock-divider.js",
+    "reactive_synth_clock_divider.wasm"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PatrickStephansen/reactive-synth-clock-divider.git"
+  },
+  "keywords": [
+    "webaudio",
+    "audioworkletprocessor",
+    "dsp",
+    "clockdivider"
+  ],
+  "author": "Patrick Stephansen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PatrickStephansen/reactive-synth-clock-divider/issues"
+  },
+  "homepage": "https://github.com/PatrickStephansen/reactive-synth-clock-divider#readme"
+}
