@@ -70,15 +70,14 @@ registerProcessor(
 				this.manualResetTriggerOn = event.data.value;
 			}
 			if (event.data && event.data.type === "wasm") {
-				this.initWasmModule(event.data.wasmBinary).then(() =>
+				this.initWasmModule(event.data.wasmModule).then(() =>
 					this.port.postMessage({ type: "module-ready", value: true })
 				);
 			}
 		}
 
-		async initWasmModule(binary) {
-			const compiledModule = await WebAssembly.compile(binary);
-			this.wasmModule = await WebAssembly.instantiate(compiledModule, {
+		async initWasmModule(wasmModule) {
+			this.wasmModule = await WebAssembly.instantiate(wasmModule, {
 				imports: {
 					clockChange: (t) => {
 						this.clockTriggerChangeMessage.value = t;
