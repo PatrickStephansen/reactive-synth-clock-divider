@@ -86,7 +86,7 @@ registerProcessor(
 					resetChange: (t) => {
 						this.resetTriggerChangeMessage.value = t;
 						this.port.postMessage(this.resetTriggerChangeMessage);
-					},
+					}
 				},
 			});
 			this.internalProcessorPtr = this.wasmModule.exports.init(
@@ -100,15 +100,15 @@ registerProcessor(
 		process(_inputs, outputs, parameters) {
 			if (this.wasmModule) {
 				this.float32WasmMemory.set(
-					this.manualClockTriggerOn || this.initialReset
-						? [1]
-						: parameters.clockTrigger,
+					this.manualClockTriggerOn ? [1] : parameters.clockTrigger,
 					this.wasmModule.exports.get_clock_gate_ptr(
 						this.internalProcessorPtr
 					) / bytesPerMemorySlot
 				);
 				this.float32WasmMemory.set(
-					this.manualResetTriggerOn ? [1] : parameters.resetTrigger,
+					this.manualResetTriggerOn || this.initialReset
+						? [1]
+						: parameters.resetTrigger,
 					this.wasmModule.exports.get_reset_gate_ptr(
 						this.internalProcessorPtr
 					) / bytesPerMemorySlot
