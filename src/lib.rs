@@ -41,7 +41,7 @@ fn divide_clock_ticks(
 	clock_stage: InputGateStage,
 	reset_stage: InputGateStage,
 ) -> (f32, f32, f32) {
-	if reset_stage == InputGateStage::Opening || reset_stage == InputGateStage::Open {
+	if reset_stage == InputGateStage::Opening {
 		output_value = 0.0;
 		ticks = ticks_on_reset;
 		tocks = tocks_on_reset;
@@ -281,6 +281,24 @@ mod tests {
 			0.0,
 			InputGateStage::Opening,
 			InputGateStage::Opening,
+		);
+		assert_eq!(out, 1.0, "output");
+		assert_eq!(ticks, 0.0, "ticks");
+		assert_eq!(tocks, 0.0, "tocks");
+	}
+
+	#[test]
+	fn just_after_reset() {
+		let (out, ticks, tocks) = divide_clock_ticks(
+			1.0,
+			0.0,
+			0.0,
+			3.0,
+			1.0,
+			2.0,
+			0.0,
+			InputGateStage::Open,
+			InputGateStage::Open,
 		);
 		assert_eq!(out, 1.0, "output");
 		assert_eq!(ticks, 0.0, "ticks");
