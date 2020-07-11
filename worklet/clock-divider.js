@@ -1,4 +1,4 @@
-const bytesPerMemorySlot = 32 / 8;
+const bytesPerMemorySlot = Float32Array.BYTES_PER_ELEMENT;
 const renderQuantumSampleCount = 128;
 
 registerProcessor(
@@ -60,6 +60,7 @@ registerProcessor(
 			this.manualClockTriggerOn = false;
 			this.manualResetTriggerOn = false;
 			this.initialReset = true;
+			this.manualTriggerOnParameter = [1];
 		}
 
 		handleMessage(event) {
@@ -100,14 +101,14 @@ registerProcessor(
 		process(_inputs, outputs, parameters) {
 			if (this.wasmModule) {
 				this.float32WasmMemory.set(
-					this.manualClockTriggerOn ? [1] : parameters.clockTrigger,
+					this.manualClockTriggerOn ? this.manualTriggerOnParameter : parameters.clockTrigger,
 					this.wasmModule.exports.get_clock_gate_ptr(
 						this.internalProcessorPtr
 					) / bytesPerMemorySlot
 				);
 				this.float32WasmMemory.set(
 					this.manualResetTriggerOn || this.initialReset
-						? [1]
+						? this.manualTriggerOnParameter
 						: parameters.resetTrigger,
 					this.wasmModule.exports.get_reset_gate_ptr(
 						this.internalProcessorPtr
