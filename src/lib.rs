@@ -46,14 +46,14 @@ fn divide_clock_ticks(
 		ticks = ticks_on_reset;
 		tocks = tocks_on_reset;
 	}
-	if clock_stage == InputGateStage::Opening && output_value == 0.0 {
+	if clock_stage == InputGateStage::Opening && output_value <= 0.0 {
 		ticks = ticks + 1.0;
 		if ticks >= open_after_ticks {
 			output_value = 1.0;
 			ticks = ticks - open_after_ticks;
 		}
 	}
-	if clock_stage == InputGateStage::Closing && output_value == 1.0 {
+	if clock_stage == InputGateStage::Closing && output_value >= 0.0 {
 		tocks = tocks + 1.0;
 		if tocks >= close_after_tocks {
 			output_value = 0.0;
@@ -71,17 +71,6 @@ pub enum InputGateStage {
 	Open = 2,
 	Closing = 3,
 	Closed = 4,
-}
-
-impl InputGateStage {
-	pub fn from_i32(code: i32) -> InputGateStage {
-		match code {
-			x if x <= 1 => InputGateStage::Opening,
-			x if x == 2 => InputGateStage::Open,
-			x if x == 3 => InputGateStage::Closing,
-			_ => InputGateStage::Closed,
-		}
-	}
 }
 
 pub struct ClockDivider {
@@ -176,7 +165,7 @@ impl ClockDivider {
 					self.reset_gate_stage = InputGateStage::Closed;
 				}
 			}
-			let (out, tick, tock) = divide_clock_ticks(
+			let (output, ticks, tocks) = divide_clock_ticks(
 				self.output_gate,
 				self.ticks,
 				self.tocks,
@@ -187,10 +176,10 @@ impl ClockDivider {
 				self.clock_gate_stage,
 				self.reset_gate_stage,
 			);
-			self.output_gate = out;
-			self.output[sample_index] = out;
-			self.ticks = tick;
-			self.tocks = tock;
+			self.output_gate = output;
+			self.output[sample_index] = output;
+			self.ticks = ticks;
+			self.tocks = tocks;
 		}
 	}
 }
@@ -278,5 +267,23 @@ mod tests {
 		assert_eq!(out, 1.0, "output");
 		assert_eq!(ticks, 0.0, "ticks");
 		assert_eq!(tocks, 2.0, "tocks");
+	}
+
+	#[test]
+	fn reset_and_tick_simultaneously() {
+		let (out, ticks, tocks) = divide_clock_ticks(
+			0.0,
+			0.0,
+			0.0,
+			3.0,
+			1.0,
+			2.0,
+			0.0,
+			InputGateStage::Opening,
+			InputGateStage::Opening,
+		);
+		assert_eq!(out, 1.0, "output");
+		assert_eq!(ticks, 0.0, "ticks");
+		assert_eq!(tocks, 0.0, "tocks");
 	}
 }
