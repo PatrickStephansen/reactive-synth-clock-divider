@@ -53,7 +53,7 @@ fn divide_clock_ticks(
 			ticks = ticks - open_after_ticks;
 		}
 	}
-	if clock_stage == InputGateStage::Closing && output_value >= 0.0 {
+	if clock_stage == InputGateStage::Closing && output_value > 0.0 {
 		tocks = tocks + 1.0;
 		if tocks >= close_after_tocks {
 			output_value = 0.0;
