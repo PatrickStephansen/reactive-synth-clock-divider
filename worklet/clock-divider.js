@@ -78,6 +78,7 @@ registerProcessor(
 		}
 
 		async initWasmModule(wasmModule) {
+			wasmModule = await WebAssembly.compile(wasmModule);
 			this.wasmModule = await WebAssembly.instantiate(wasmModule, {
 				imports: {
 					clockChange: (t) => {
